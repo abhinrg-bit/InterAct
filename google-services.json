@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "673422371077",
+    "project_id": "interact-b9f98",
+    "storage_bucket": "interact-b9f98.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673422371077:android:1ef38b505c6f88da2d2f6c",
+        "android_client_info": {
+          "package_name": "com.abhnrg.interact"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "673422371077-38vphvqetggqdp974ntddr375bk2dsd1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abhnrg.interact",
+            "certificate_hash": "7fc7ca9c6c5c1befeabdaa7385a9f4317dcc52f7"
+          }
+        },
+        {
+          "client_id": "673422371077-i1mru9ti9o0294ijk39kttlu6cs13884.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlGTAoO5gejyLJ2afR2sVOjg8oVwSYLAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673422371077-i1mru9ti9o0294ijk39kttlu6cs13884.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

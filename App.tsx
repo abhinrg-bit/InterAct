@@ -16,11 +16,14 @@ import {
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
 } from "@react-native-firebase/auth";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
 import {
   addDoc,
@@ -35,6 +38,9 @@ import {
   setDoc,
 } from "@react-native-firebase/firestore";
 
+GoogleSignin.configure({
+  webClientId: "673422371077-1mru9ti9o02941jk39kttlu6c513884.apps.googleusercontent.com",
+});
 const auth = getAuth();
 const db = getFirestore();
 
@@ -60,6 +66,7 @@ export default function App() {
   const [name, setName] = useState("");
 
   const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const [friendEmail, setFriendEmail] = useState("");
   const [friendUid, setFriendUid] = useState<string | null>(null);
@@ -129,6 +136,37 @@ export default function App() {
 
     return unsubscribe;
   }, [user, friendUid]);
+
+  const handleGoogleSignIn = async () => {
+    setAuthError("");
+    setAuthLoading(true);
+
+    try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+
+      const response = await GoogleSignin.signIn();
+
+      if (response.type !== "success") {
+        return;
+      }
+
+      const idToken = response.data.idToken;
+
+      if (!idToken) {
+        throw new Error("Google ID token was not returned.");
+      }
+
+      const credential = GoogleAuthProvider.credential(idToken);
+
+      await signInWithCredential(auth, credential);
+    } catch (error: any) {
+      setAuthError(error?.message || "Google Sign-In failed.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
 
   const handleAuth = async () => {
     const cleanEmail = email.trim().toLowerCase();
@@ -372,7 +410,15 @@ export default function App() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+                <TouchableOpacity
+        style={styles.googleButton}
+        onPress={handleGoogleSignIn}
+        disabled={authLoading}
+      >
+        <Text style={styles.googleButtonText}>Continue with Google</Text>
+      </TouchableOpacity>
+
+<TouchableOpacity
             onPress={() => setMode(mode === "login" ? "signup" : "login")}
           >
             <Text style={styles.switchText}>
@@ -564,6 +610,22 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     marginBottom: 14,
     fontSize: 16,
+  },
+
+  googleButton: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+  },
+
+  googleButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#222222",
   },
 
   primaryButton: {
