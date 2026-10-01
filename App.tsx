@@ -39,7 +39,7 @@ import {
 } from "@react-native-firebase/firestore";
 
 GoogleSignin.configure({
-  webClientId: "673422371077-1mru9ti9o02941jk39kttlu6c513884.apps.googleusercontent.com",
+  webClientId: "autoDetect",
 });
 const auth = getAuth();
 const db = getFirestore();
