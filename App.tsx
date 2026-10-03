@@ -36,6 +36,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  where,
 } from "@react-native-firebase/firestore";
 
 GoogleSignin.configure({
@@ -74,6 +75,7 @@ export default function App() {
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [chatList, setChatList] = useState<any[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
 
   useEffect(() => {
@@ -92,6 +94,18 @@ export default function App() {
           },
           { merge: true }
         );
+
+      const cleanEmail = (currentUser.email || "").trim().toLowerCase();
+
+      if (cleanEmail) {
+        await setDoc(
+          doc(db, "emailIndex", cleanEmail),
+          {
+            uid: currentUser.uid,
+          },
+          { merge: true }
+        );
+      }
       }
     });
 
@@ -208,7 +222,11 @@ export default function App() {
           updatedAt: serverTimestamp(),
         });
 
-        Alert.alert("Success", "InterAct account create ho gaya.");
+        await setDoc(doc(db, "emailIndex", cleanEmail), {
+        uid: result.user.uid,
+      });
+
+      Alert.alert("Success", "InterAct account create ho gaya.");
       } else {
         await signInWithEmailAndPassword(
           auth,
@@ -304,6 +322,60 @@ export default function App() {
       setChatLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      setChatList([]);
+      return;
+    }
+
+    const chatsQuery = query(
+      collection(db, "chats"),
+      where("participants", "array-contains", user.uid)
+    );
+
+    const unsubscribe = onSnapshot(chatsQuery, async (snapshot) => {
+      const items = await Promise.all(
+        snapshot.docs.map(async (chatDoc) => {
+          const data = chatDoc.data();
+          const otherUid = (data.participants || []).find(
+            (uid: string) => uid !== user.uid
+          );
+
+          if (!otherUid) return null;
+
+          const otherUserSnap = await getDoc(
+            doc(db, "users", otherUid)
+          );
+
+          const otherUser = otherUserSnap.exists()
+            ? otherUserSnap.data()
+            : {};
+
+          return {
+            id: chatDoc.id,
+            friendUid: otherUid,
+            friendName: otherUser.name || otherUser.email || "InterAct User",
+            friendEmail: otherUser.email || "",
+            lastMessage: data.lastMessage || "",
+            updatedAt: data.updatedAt || null,
+          };
+        })
+      );
+
+      setChatList(
+        items
+          .filter(Boolean)
+          .sort((a: any, b: any) => {
+            const aTime = a.updatedAt?.toMillis?.() || 0;
+            const bTime = b.updatedAt?.toMillis?.() || 0;
+            return bTime - aTime;
+          })
+      );
+    });
+
+    return unsubscribe;
+  }, [user]);
 
   const sendMessage = async () => {
     const text = message.trim();
@@ -453,6 +525,44 @@ export default function App() {
           <Text style={styles.welcome}>
             Welcome, {user.displayName || user.email}
           </Text>
+
+          <Text style={styles.sectionTitle}>
+            My Chats
+          </Text>
+
+          {chatList.length === 0 ? (
+            <Text style={styles.empty}>
+              No chats yet. Start your first private chat below.
+            </Text>
+          ) : (
+            chatList.map((chat) => (
+              <TouchableOpacity
+                key={chat.id}
+                style={styles.chatListItem}
+                onPress={() => {
+                  setFriendUid(chat.friendUid);
+                  setFriendName(chat.friendName);
+                  setFriendEmail(chat.friendEmail);
+                }}
+              >
+                <View style={styles.chatAvatar}>
+                  <Text style={styles.chatAvatarText}>
+                    {(chat.friendName || "I").charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+
+                <View style={styles.chatListText}>
+                  <Text style={styles.chatListName}>
+                    {chat.friendName}
+                  </Text>
+
+                  <Text style={styles.chatListLastMessage} numberOfLines={1}>
+                    {chat.lastMessage || "No messages yet"}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
 
           <Text style={styles.sectionTitle}>
             Start a private chat
@@ -773,6 +883,47 @@ const styles = StyleSheet.create({
     color: "#68748A",
     textAlign: "center",
     marginBottom: 20,
+  },
+
+  chatListItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+
+  chatAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#2563EB",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+
+  chatAvatarText: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+
+  chatListText: {
+    flex: 1,
+  },
+
+  chatListName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+  },
+
+  chatListLastMessage: {
+    marginTop: 3,
+    fontSize: 14,
+    color: "#6B7280",
   },
 
   composer: {
