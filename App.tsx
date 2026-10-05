@@ -398,7 +398,6 @@ export default function App() {
       await setDoc(
         doc(db, "chats", chatId),
         {
-          participants: [user.uid, friendUid],
           updatedAt: serverTimestamp(),
           lastMessage: text,
         },
@@ -929,7 +928,10 @@ const styles = StyleSheet.create({
   composer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    padding: 10,
+    paddingTop: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 18,
+    minHeight: 72,
     borderTopWidth: 1,
     borderTopColor: "#1D263B",
   },
