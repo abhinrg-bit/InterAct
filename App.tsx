@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -76,6 +76,15 @@ export default function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatList, setChatList] = useState<any[]>([]);
+  const flatListRef = useRef<FlatList<any>>(null);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
   const [chatLoading, setChatLoading] = useState(false);
 
   useEffect(() => {
