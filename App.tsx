@@ -522,17 +522,64 @@ export default function App() {
         <StatusBar barStyle="light-content" />
 
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>InterAct</Text>
+          <View style={styles.headerBrand}>
+            <View style={styles.headerLogo}>
+              <Text style={styles.headerLogoText}>I</Text>
+            </View>
 
-          <TouchableOpacity onPress={logout}>
-            <Text style={styles.logout}>Logout</Text>
-          </TouchableOpacity>
+            <View style={styles.headerTitleBlock}>
+              <Text style={styles.headerTitle}>InterAct</Text>
+              <Text style={styles.headerSubtitle}>Private & secure</Text>
+            </View>
+          </View>
+
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={styles.headerIconButton}
+              onPress={() => alert("Search will be available soon.")}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.headerIcon}>⌕</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.headerIconButton}
+              onPress={() => alert("More options will be available soon.")}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.headerIcon}>⋮</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.home}>
-          <Text style={styles.welcome}>
-            Welcome, {user.displayName || user.email}
-          </Text>
+          <TouchableOpacity
+            style={styles.profileCard}
+            activeOpacity={0.85}
+            onPress={() => alert("Profile screen will be available soon.")}
+          >
+            <View style={styles.profileAvatar}>
+              <Text style={styles.profileAvatarText}>
+                {(user.displayName || user.email || "A").charAt(0).toUpperCase()}
+              </Text>
+            </View>
+
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>
+                {user.displayName || "InterAct User"}
+              </Text>
+
+              <Text style={styles.profileEmail}>
+                {user.email || ""}
+              </Text>
+
+              <Text style={styles.profileStatus}>
+                ● Available on InterAct
+              </Text>
+            </View>
+
+            <Text style={styles.profileArrow}>›</Text>
+          </TouchableOpacity>
 
           <Text style={styles.sectionTitle}>
             My Chats
@@ -572,9 +619,10 @@ export default function App() {
             ))
           )}
 
-          <Text style={styles.sectionTitle}>
-            Start a private chat
-          </Text>
+          <View style={styles.newChatCard}>
+            <Text style={styles.sectionTitle}>
+              Start a private chat
+            </Text>
 
           <TextInput
             style={styles.input}
@@ -599,6 +647,7 @@ export default function App() {
           <Text style={styles.help}>
             Both users must have InterAct accounts.
           </Text>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -786,6 +835,48 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
+  headerBrand: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+
+  headerLogo: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: "#2563EB",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+
+  headerLogoText: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "800",
+  },
+
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  headerIconButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 4,
+  },
+
+  headerIcon: {
+    color: "#FFFFFF",
+    fontSize: 28,
+    fontWeight: "600",
+  },
+
   header: {
     height: 70,
     paddingHorizontal: 20,
@@ -794,6 +885,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 1,
     borderBottomColor: "#1D263B",
+  },
+
+  headerTitleBlock: {
+    justifyContent: "center",
+  },
+
+  headerSubtitle: {
+    marginTop: 1,
+    fontSize: 11,
+    color: "#8B93A7",
+    fontWeight: "500",
   },
 
   headerTitle: {
@@ -805,6 +907,62 @@ const styles = StyleSheet.create({
   logout: {
     color: "#FF7777",
     fontWeight: "600",
+  },
+
+  profileCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    marginBottom: 24,
+    borderRadius: 20,
+    backgroundColor: "#151D32",
+    borderWidth: 1,
+    borderColor: "#26314D",
+  },
+
+  profileAvatar: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: "#2563EB",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+
+  profileAvatarText: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "700",
+  },
+
+  profileInfo: {
+    flex: 1,
+  },
+
+  profileName: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+
+  profileEmail: {
+    color: "#8E99B3",
+    fontSize: 13,
+    marginTop: 3,
+  },
+
+  profileStatus: {
+    color: "#4ADE80",
+    fontSize: 12,
+    marginTop: 6,
+    fontWeight: "600",
+  },
+
+  profileArrow: {
+    color: "#8E99B3",
+    fontSize: 30,
+    marginLeft: 8,
   },
 
   home: {
@@ -819,10 +977,21 @@ const styles = StyleSheet.create({
   },
 
   sectionTitle: {
+    marginTop: 18,
+    marginBottom: 12,
+    fontSize: 21,
+    fontWeight: "800",
     color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "700",
-    marginBottom: 15,
+    letterSpacing: 0.2,
+  },
+
+  newChatCard: {
+    backgroundColor: "#111827",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#1F2937",
+    padding: 16,
+    marginBottom: 18,
   },
 
   help: {
@@ -896,28 +1065,42 @@ const styles = StyleSheet.create({
   },
 
   empty: {
-    color: "#68748A",
+    marginTop: 4,
+    marginBottom: 14,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    backgroundColor: "#0F172A",
+    borderWidth: 1,
+    borderColor: "#1F2937",
+    color: "#9CA3AF",
+    fontSize: 14,
+    lineHeight: 20,
     textAlign: "center",
-    marginBottom: 20,
   },
 
   chatListItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    marginBottom: 8,
+    borderRadius: 18,
+    backgroundColor: "#111827",
+    borderWidth: 1,
+    borderColor: "#1F2937",
   },
 
   chatAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "#2563EB",
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#4F7CFF",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: 14,
+    borderWidth: 1,
+    borderColor: "#6B8CFF",
   },
 
   chatAvatarText: {
@@ -931,15 +1114,16 @@ const styles = StyleSheet.create({
   },
 
   chatListName: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "700",
-    color: "#111827",
+    color: "#FFFFFF",
+    marginBottom: 4,
   },
 
   chatListLastMessage: {
-    marginTop: 3,
     fontSize: 14,
-    color: "#6B7280",
+    color: "#9CA3AF",
+    lineHeight: 19,
   },
 
   composer: {
