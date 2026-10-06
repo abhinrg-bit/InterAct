@@ -632,6 +632,7 @@ export default function App() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <FlatList
+          ref={flatListRef}
           data={messages}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.messages}
