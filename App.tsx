@@ -635,6 +635,13 @@ export default function App() {
           data={messages}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.messages}
+          onContentSizeChange={() => {
+            if (messages.length > 0) {
+              setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: true });
+              }, 50);
+            }
+          }}
           renderItem={({ item }) => {
             const mine = item.senderId === user.uid;
 
